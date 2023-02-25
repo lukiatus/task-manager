@@ -19,13 +19,8 @@ class ViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_view)
         id = intent.getIntExtra("taskId", 0)
         title = "View task #$id"
-        // Database initialization
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "taskManagerDb"
-        ).allowMainThreadQueries().build()
 
-        var task = db.taskDao().getById(id)
+        var task = AppDatabase.getDatabase(applicationContext).taskDao().getById(id)
         findViewById<TextView>(R.id.viewTitle).apply {
             text = task.title
         }
@@ -45,5 +40,11 @@ class ViewActivity : AppCompatActivity() {
 
     fun editButtonCliked(view: View) {
         editTask(id)
+    }
+
+    fun deleteButtonClicked(view: View) {
+        var task = AppDatabase.getDatabase(applicationContext).taskDao().getById(id)
+        AppDatabase.getDatabase(applicationContext).taskDao().delete(task)
+        startActivity(Intent(this, MainActivity::class.java))
     }
 }
